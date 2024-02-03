@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "firesaas-demo"
+    "default": "<PROJECT-ID-HERE>"
   }
 }
