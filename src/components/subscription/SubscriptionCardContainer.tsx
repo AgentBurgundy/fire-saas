@@ -32,11 +32,7 @@ export default function SubscriptionCardContainer({ salesCall }: any) {
             <SubscriptionCard
               key={product.id}
               productId={product.id}
-              features={[
-                "Get stuff",
-                "Get even more stuff",
-                "Guess what? More stuff!",
-              ]}
+              planName={product.name}
               buttonText={product.metadata.buttonText}
               popular={product.metadata.popular === "true"}
             />
