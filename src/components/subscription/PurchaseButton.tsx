@@ -31,6 +31,13 @@ export default function PurchaseButton({
 
     if (!priceId) return console.error("No priceId provided");
 
+    /**
+     * This is how we make a checkout session for non-donate purchases
+     * Basically, create a document in the user's checkout_sessions collection
+     * and then listen for changes to that document. When the sessionId is added,
+     * redirect to the checkout session. (The firebase extension for stripe automatically adds the sessionId
+     * to the document when it's created in the backend.)
+     */
     const docRef = await addDoc(
       collection(db, "users", currentUser.uid, "checkout_sessions"),
       {
@@ -46,6 +53,10 @@ export default function PurchaseButton({
 
   useEffect(() => {
     if (!checkoutSessionDocRef) return;
+
+    /**
+     * We list for the changes on our checkout session document and redirect to the checkout session when we can.
+     */
 
     const unsubscribe = onSnapshot(checkoutSessionDocRef, async (doc) => {
       const data = doc.data();

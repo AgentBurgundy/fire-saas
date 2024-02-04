@@ -4,7 +4,7 @@ import getStripe from "./getStripe";
 /**
  * If you are using a one-time payment, you can use this function to create a checkout session.
  *
- * DO NOT use this function for subscriptions. Use `createSubscriptionCheckout` instead.
+ * DO NOT use this function for subscriptions.
  *
  * @param priceId
  * @returns
