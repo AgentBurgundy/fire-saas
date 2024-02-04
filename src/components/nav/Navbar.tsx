@@ -15,7 +15,7 @@ export default function Navbar() {
       <div className="flex-none">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a href="https://firesaas.dev/docs">Documentation</a>
+            <a href="https://docs.firesaas.dev">Documentation</a>
           </li>
         </ul>
 
