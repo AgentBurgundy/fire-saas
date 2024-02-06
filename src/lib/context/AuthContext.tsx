@@ -37,10 +37,6 @@ export const AuthProvider = ({ children }: any) => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
-  // We use this query param to show the pricing info after the user logs in
-  const searchParams = useSearchParams();
-  const showPricing = searchParams.get("showPricing");
-
   const pathname = usePathname();
   const router = useRouter();
 
@@ -90,11 +86,7 @@ export const AuthProvider = ({ children }: any) => {
 
     // If signed in and on the login page, redirect to dashboard
     if (currentUser && pathname.startsWith("/login")) {
-      if (showPricing) {
-        router.push("/app/dashboard?showPricing=true");
-      } else {
-        router.push("/app/dashboard");
-      }
+      router.push("/app/dashboard");
     }
   }, [currentUser, pathname, router, isLoadingAuth]);
 

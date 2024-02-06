@@ -1,14 +1,39 @@
-import { useEffect, useRef } from "react";
+"use client";
+import { useEffect, useRef, useState } from "react";
 import SubscriptionCardContainer from "./SubscriptionCardContainer";
+import { useSearchParams } from "next/navigation";
+import { set } from "firebase/database";
 
-export default function SubscriptionModal({ modalOpen }: any) {
+export default function SubscriptionModal({}: any) {
   const modalRef = useRef<HTMLDialogElement>(null);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showPricing, setShowPricing] = useState("");
 
   useEffect(() => {
-    if (modalOpen && modalRef.current) {
+    if (typeof window !== "undefined") {
+      let pricing = localStorage.getItem("showPricing");
+      if (!pricing) return;
+
+      setShowPricing(pricing);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showPricing === "true") {
+      setShowSubscriptionModal(true);
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("showPricing", "false");
+        setShowPricing("false");
+      }
+    }
+  }, [showPricing]);
+
+  useEffect(() => {
+    if (showSubscriptionModal && modalRef.current) {
       modalRef.current.showModal();
     }
-  }, [modalOpen, modalRef]);
+  }, [showSubscriptionModal, modalRef]);
 
   return (
     <dialog

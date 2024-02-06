@@ -27,6 +27,7 @@
     "stripe": "^14.14.0"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/mixpanel-browser": "^2.48.1",
     "@types/node": "^20",
     "@types/react": "^18",

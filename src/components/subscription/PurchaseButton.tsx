@@ -25,7 +25,10 @@ export default function PurchaseButton({
 
   const onClickBuy = async () => {
     if (!currentUser) {
-      router.push("/login?showPricing=true");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("showPricing", "true");
+      }
+      router.push("/login");
       return;
     }
 
