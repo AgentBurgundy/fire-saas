@@ -27,4 +27,5 @@ export type StripePriceData = {
   trial_period_days: number;
   type: string;
   unit_amount: number;
+  formatted_price: string;
 };

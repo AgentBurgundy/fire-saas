@@ -1,3 +1,5 @@
+import { StripePriceData } from "./StripePriceData";
+
 export type StripeProductData = {
   id: string;
   active: boolean;
@@ -11,4 +13,5 @@ export type StripeProductData = {
   name: string;
   role: string;
   tax_code: string;
+  price?: StripePriceData;
 };

@@ -9,7 +9,7 @@ import {
   collection,
   onSnapshot,
 } from "firebase/firestore";
-import { useRouter } from "next-nprogress-bar";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function PurchaseButton({
@@ -28,6 +28,7 @@ export default function PurchaseButton({
       if (typeof window !== "undefined") {
         localStorage.setItem("showPricing", "true");
       }
+
       router.push("/login");
       return;
     }
@@ -60,17 +61,17 @@ export default function PurchaseButton({
     /**
      * We list for the changes on our checkout session document and redirect to the checkout session when we can.
      */
-
     const unsubscribe = onSnapshot(checkoutSessionDocRef, async (doc) => {
       const data = doc.data();
+
       if (data?.sessionId) {
-        setLoading(false);
         const stripe = await getStripe();
         if (!stripe) return setLoading(false);
 
         setCheckoutSessionDocRef(null);
-        setLoading(false);
+
         await stripe.redirectToCheckout({ sessionId: data.sessionId });
+        setLoading(false);
       }
     });
 
@@ -83,7 +84,11 @@ export default function PurchaseButton({
       onClick={onClickBuy}
       className={`btn ${popular ? "btn-primary" : "btn-secondary"}`}
     >
-      {loading ? "Loading..." : buttonText}
+      {loading ? (
+        <span className="loading loading-spinner loading-xs"></span>
+      ) : (
+        buttonText
+      )}
     </button>
   );
 }
