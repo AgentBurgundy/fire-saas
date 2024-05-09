@@ -2,17 +2,17 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase/firebaseClient";
-import { User, getIdTokenResult, onAuthStateChanged } from "firebase/auth";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { usePathname, useRouter } from "next/navigation";
 import { DefaultCookieManager } from "../cookies/DefaultCookieManager";
 
 const AuthContext = createContext<{
   currentUser: User | null;
-  userRole: string | null;
+  userClaims: string | null;
   isLoadingAuth: boolean;
 }>({
   currentUser: null,
-  userRole: null,
+  userClaims: null,
   isLoadingAuth: true,
 });
 
@@ -34,23 +34,49 @@ export const useAuth = () => useContext(AuthContext);
  */
 export const AuthProvider = ({ children }: any) => {
   const [currentUser, setCurrentUser] = useState<any>();
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userClaims, setUserClaims] = useState<any>(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   const pathname = usePathname();
   const router = useRouter();
 
-  // Listen for changes in the user's authentication state, store the UID cookie and the currentUser state
+  const refreshToken = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      await user.getIdToken(true); // Force token refresh
+    }
+  };
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
         setIsLoadingAuth(false);
 
+        // Fetch the ID token and decode it to get the claims
+        const refreshAndSetClaims = async () => {
+          console.log("Refreshing token and setting claims");
+
+          await refreshToken(); // Force token refresh
+          const tokenResult = await user.getIdTokenResult();
+          setUserClaims(tokenResult.claims); // Update claims with refreshed token
+        };
+
+        refreshAndSetClaims();
+
         DefaultCookieManager.addAuthCookie(user.uid);
+
+        // mixpanel.identify(user.uid);
+        // mixpanel.people.set({
+        //   $email: user.email,
+        //   $name: user.displayName,
+        // });
+
+        //mixpanel.track("User Authenticated");
       } else {
         setCurrentUser(null);
         setIsLoadingAuth(false);
+        setUserClaims(null); // Reset claims to null if not authenticated
 
         DefaultCookieManager.removeAuthCookie();
       }
@@ -58,19 +84,6 @@ export const AuthProvider = ({ children }: any) => {
 
     return () => unsubscribe();
   }, []);
-
-  // Populate the user's role from their token's stripeRole claim
-  useEffect(() => {
-    const getUserRoleFromToken = async () => {
-      const decodedToken = await getIdTokenResult(currentUser, true);
-
-      setUserRole((decodedToken?.claims?.stripeRole as string) ?? "Free");
-    };
-
-    if (currentUser) {
-      getUserRoleFromToken();
-    }
-  }, [currentUser]);
 
   // Redirect based on authentication state
   useEffect(() => {
@@ -92,7 +105,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const value = {
     currentUser,
-    userRole,
+    userClaims,
     isLoadingAuth,
   };
 
