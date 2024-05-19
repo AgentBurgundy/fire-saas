@@ -6,6 +6,10 @@
 
 FireSaaS is an integrated SaaS (Software as a Service) solution that leverages Firebase, Stripe, and other technologies to create a seamless and scalable platform for SaaS businesses. This project encapsulates key functionalities like user authentication, subscription management, and payment processing, making it easier for developers to build and manage SaaS applications.
 
+## **Updates**
+
+Now supports Firebase App Hosting!
+
 ## **Key Features**
 
 - **Firebase Integration**: Utilizes Firebase for backend services including authentication and database management.
