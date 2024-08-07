@@ -8,7 +8,7 @@ FireSaaS is an integrated SaaS (Software as a Service) solution that leverages F
 
 ## **Updates**
 
-Now supports Firebase App Hosting!
+Firebase App Hosting support WIP (GCP Removes Cookies on requests)
 
 ## **Key Features**
 
