@@ -2,29 +2,53 @@ import toast from "react-hot-toast";
 import getStripe from "./getStripe";
 
 /**
- * If you are using a one-time payment, you can use this function to create a checkout session.
+ * Creates a one-time checkout session with Stripe and redirects the user to the checkout page.
  *
- * DO NOT use this function for subscriptions.
+ * This function is specifically designed for one-time payments and should not be used for subscriptions.
+ * It creates a checkout session using the provided price ID, then redirects the user to the Stripe checkout page.
  *
- * @param priceId
- * @returns
+ * @async
+ * @param {string} priceId - The Stripe Price ID for the product or service being purchased.
+ * @throws {Error} If there's an issue loading Stripe, creating the checkout session, or redirecting to checkout.
+ *
+ * @example
+ * try {
+ *   await createOneTimeCheckout('price_1234567890');
+ * } catch (error) {
+ *   console.error('Checkout failed:', error);
+ *   // Handle the error (error message is already displayed via toast)
+ * }
+ *
+ * @returns {Promise<void>}
  */
-export default async function createOneTimeCheckout(priceId: string) {
-  const stripe = await getStripe();
-  if (!stripe) {
-    toast.error("Failed to load stripe");
-    return;
-  }
+export default async function createOneTimeCheckout(
+  priceId: string
+): Promise<void> {
+  try {
+    const stripe = await getStripe();
+    if (!stripe) {
+      throw new Error("Failed to load Stripe");
+    }
 
-  const res = await fetch("/api/stripe/checkout_session", {
-    method: "POST",
-    body: JSON.stringify({ priceId }),
-  });
-  const { id } = await res.json();
+    const res = await fetch("/api/stripe/checkout_session", {
+      method: "POST",
+      body: JSON.stringify({ priceId }),
+    });
 
-  const { error } = await stripe.redirectToCheckout({ sessionId: id });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
 
-  if (error) {
-    toast.error("Failed to redirect to checkout");
+    const { id } = await res.json();
+    const { error } = await stripe.redirectToCheckout({ sessionId: id });
+
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    toast.error(
+      error instanceof Error ? error.message : "An unknown error occurred"
+    );
   }
 }

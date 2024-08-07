@@ -4,6 +4,9 @@ import mixpanel from "mixpanel-browser";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./AuthContext";
 import { SubscriptionModalProvider } from "./SubscriptionModalContext";
+import { AuthService } from "../auth/AuthService";
+
+const authService = new AuthService();
 
 export default function ClientProviders({ children }: any) {
   mixpanel.init(process.env.NEXT_PUBLIC_MIXPANEL_TOKEN as string, {
@@ -13,7 +16,7 @@ export default function ClientProviders({ children }: any) {
   });
 
   return (
-    <AuthProvider>
+    <AuthProvider authService={authService}>
       <SubscriptionModalProvider>
         <Toaster />
         {children}

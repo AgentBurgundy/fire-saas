@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import SubscriptionModalReminder from "../subscription/SubscriptionModalReminder";
 
 export default function ManageAccount() {
-  const { userRole } = useAuth();
+  const { userClaims } = useAuth();
 
   const handleManage = async () => {
     const url = await createPortalLink();
@@ -21,12 +21,12 @@ export default function ManageAccount() {
   return (
     <div className="flex flex-col space-y-4 items-center justify-center py-4 px-16 bg-neutral-content rounded-xl">
       <span>Your Billing</span>
-      {userRole !== "Free" && (
+      {userClaims?.stripeRole !== "Free" && (
         <button onClick={handleManage} className="btn btn-primary">
           Manage Subscription
         </button>
       )}
-      {userRole === "Free" && <SubscriptionModalReminder />}
+      {userClaims?.stripeRole === "Free" && <SubscriptionModalReminder />}
     </div>
   );
 }

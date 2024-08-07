@@ -20,7 +20,7 @@ export async function GET(
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Get active price doc from prices subscollection
+    // Get active price doc from prices subcollection
     const pricesSnapshot = await admin
       .firestore()
       .collection("products")

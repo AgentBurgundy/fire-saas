@@ -3,15 +3,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { signInGoogle } from "@/lib/firebase/signin";
 import toast from "react-hot-toast";
-import {
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "@/lib/firebase/firebaseClient";
-import router from "next/router";
+import { useRouter } from "next/navigation";
+import { signIn, SignInMethod } from "@/lib/firebase/signin";
+import signUp from "@/lib/firebase/signup";
 
 enum FormMode {
   Login,
@@ -23,24 +20,65 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formMode, setFormMode] = useState<FormMode>(FormMode.Login);
+  const router = useRouter();
 
   const handleGoogleAuth = async () => {
-    await signInGoogle();
+    try {
+      const { user, error } = await signIn(SignInMethod.Google, {
+        signupCallback: async (userCredential) => {
+          console.log("New user signed up", userCredential.user.uid);
+
+          // When a new user signs up, call the signup endpoint
+          const response = await fetch("/api/users/signup", {
+            method: "POST",
+            body: JSON.stringify({
+              uid: userCredential.user.uid,
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+            }),
+          });
+        },
+      });
+      if (user) {
+        router.push("/app/dashboard");
+      } else if (error) {
+        toast.error(error);
+      }
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      toast.error("An unexpected error occurred during Google sign-in");
+    }
   };
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {
-      switch (error.code) {
-        case "auth/user-not-found":
-        case "auth/wrong-password":
-          toast.error("Incorrect email or password.");
-          break;
-        default:
-          console.error(error);
-          toast.error("An error occurred. Please try again.");
+      const { user, error } = await signIn(SignInMethod.EmailPassword, {
+        credentials: {
+          email,
+          password,
+        },
+        signupCallback: async (userCredential) => {
+          console.log("New user signed up", userCredential.user.uid);
+
+          // When a new user signs up, call the signup endpoint
+          const response = await fetch("/api/users/signup", {
+            method: "POST",
+            body: JSON.stringify({
+              uid: userCredential.user.uid,
+              email: userCredential.user.email,
+              name: userCredential.user.displayName,
+            }),
+          });
+        },
+      });
+      if (user) {
+        router.push("/app/dashboard");
+      } else if (error) {
+        toast.error(error);
       }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An unexpected error occurred during login");
     }
   };
 
@@ -51,20 +89,20 @@ export default function AuthForm() {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      router.push("/dashboard");
-    } catch (error: any) {
-      if (error.code === "auth/email-already-in-use") {
-        toast.error("Email already in use.");
-      } else {
-        console.error(error);
-        toast.error("An error occurred. Please try again.");
+      const { user, error } = await signUp(email, password);
+      if (user) {
+        router.push("/app/dashboard");
+      } else if (error) {
+        toast.error(error.message);
       }
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("An unexpected error occurred during registration");
     }
   };
 
   const handleForgotPassword = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent the page from navigating on link click
+    e.preventDefault();
     if (!email) {
       toast.error("Please enter your email address.");
       return;

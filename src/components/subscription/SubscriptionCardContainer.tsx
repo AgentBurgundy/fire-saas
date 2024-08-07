@@ -1,12 +1,15 @@
 "use client";
 
-import { StripeProductData } from "@/lib/types/StripeProductData";
+import { StripeProductData } from "@/lib/stripe/types/StripeProductData";
 import SubscriptionCard from "./SubscriptionCard";
 
 export default function SubscriptionCardContainer({
   products,
   salesCall,
-}: any) {
+}: {
+  products: StripeProductData[];
+  salesCall?: string;
+}) {
   return (
     <div className="flex flex-col space-y-10 items-center justify-center w-full">
       {salesCall && (

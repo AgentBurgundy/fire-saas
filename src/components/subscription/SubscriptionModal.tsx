@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import SubscriptionCardContainer from "./SubscriptionCardContainer";
-import { StripeProductData } from "@/lib/types/StripeProductData";
+import { StripeProductData } from "@/lib/stripe/types/StripeProductData";
 import { useSubscriptionModal } from "@/lib/context/SubscriptionModalContext";
 
 export default function SubscriptionModal({

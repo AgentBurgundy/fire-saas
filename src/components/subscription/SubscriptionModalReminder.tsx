@@ -4,11 +4,11 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { useSubscriptionModal } from "@/lib/context/SubscriptionModalContext";
 
 export default function SubscriptionModalReminder() {
-  const { userRole } = useAuth();
+  const { userClaims } = useAuth();
   const { showSubscriptionModal, setShowSubscriptionModal } =
     useSubscriptionModal();
 
-  if (userRole !== "Free") {
+  if (userClaims?.role !== "Free") {
     return null;
   }
 

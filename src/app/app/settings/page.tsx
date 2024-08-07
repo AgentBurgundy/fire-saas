@@ -1,6 +1,6 @@
 import ManageAccount from "@/components/settings/ManageAccount";
 import SubscriptionModal from "@/components/subscription/SubscriptionModal";
-import fetchStripeProducts from "@/lib/server/fetchStripeProducts";
+import fetchStripeProducts from "@/lib/stripe/fetchStripeProducts";
 
 export default async function SettingsPage() {
   const { products } = await fetchStripeProducts();

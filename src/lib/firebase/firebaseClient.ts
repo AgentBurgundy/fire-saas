@@ -3,6 +3,10 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 
+/**
+ * Firebase configuration object.
+ * These values are loaded from environment variables.
+ */
 const clientCredentials = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -15,7 +19,10 @@ const clientCredentials = {
 
 let firebase_app: FirebaseApp;
 
-// Check if firebase app is already initialized to avoid creating new app on hot-reloads
+/**
+ * Initialize Firebase app or return existing instance.
+ * This prevents creating multiple instances during hot-reloads.
+ */
 if (!getApps().length) {
   firebase_app = initializeApp(clientCredentials);
 } else {
@@ -24,6 +31,10 @@ if (!getApps().length) {
 
 export default firebase_app;
 
+/**
+ * Exported Firebase service instances.
+ * These can be imported and used throughout the application.
+ */
 export const db = getFirestore(firebase_app);
 export const auth = getAuth(firebase_app);
 export const functions = getFunctions(firebase_app);

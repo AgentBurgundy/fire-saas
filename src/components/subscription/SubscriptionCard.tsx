@@ -1,12 +1,12 @@
 "use client";
 
-import { StripeProductData } from "@/lib/types/StripeProductData";
+import { StripeProductData } from "@/lib/stripe/types/StripeProductData";
 import PurchaseButton from "./PurchaseButton";
 
 /**
  * Adjust this map to match your plan names and product features you'd like to display
  */
-const featuresMap: any = {
+const featuresMap: Record<string, string[]> = {
   "Basic Plan": ["Feature 1", "Feature 2", "Feature 3"],
   "Premium Plan": ["Feature 1", "Feature 2", "Feature 3", "Feature 4"],
 };

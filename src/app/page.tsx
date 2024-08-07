@@ -1,7 +1,8 @@
 import ExplanationSection from "@/components/sections/Explanation";
 import HeroSection from "@/components/sections/HeroSection";
+import StripePricingTable from "@/components/subscription/StripePricingTable";
 import SubscriptionCardContainer from "@/components/subscription/SubscriptionCardContainer";
-import fetchStripeProducts from "@/lib/server/fetchStripeProducts";
+import fetchStripeProducts from "@/lib/stripe/fetchStripeProducts";
 
 export default async function Home() {
   const { products } = await fetchStripeProducts();
@@ -15,6 +16,11 @@ export default async function Home() {
       <SubscriptionCardContainer
         products={products}
         salesCall="Save money and time, buy my SaaS app today and you won't regret it!"
+      />
+
+      <StripePricingTable
+        pricingTableId="prctbl_1OgCflCLPADkTljcIdzPukni"
+        publishableKey="pk_test_51NyS5wCLPADkTljcNsxH5B71sfFMfC1t47MFQv3JAcFWnV0yVBcfV6hvhR18igcbz1Y0IG79EtCA3vXoZ9Vjax6W008Q95NrMj"
       />
     </main>
   );
