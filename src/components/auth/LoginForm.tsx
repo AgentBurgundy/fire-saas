@@ -20,6 +20,7 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [formMode, setFormMode] = useState<FormMode>(FormMode.Login);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleGoogleAuth = async () => {
@@ -84,7 +85,7 @@ export default function AuthForm() {
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      setError("Passwords do not match.");
       return;
     }
 
@@ -93,11 +94,11 @@ export default function AuthForm() {
       if (user) {
         router.push("/app/dashboard");
       } else if (error) {
-        toast.error(error.message);
+        setError(error.message);
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("An unexpected error occurred during registration");
+      setError("An unexpected error occurred during registration");
     }
   };
 
@@ -124,6 +125,7 @@ export default function AuthForm() {
           <h2 className="card-title">
             {formMode === FormMode.Login ? "Login" : "Register"}
           </h2>
+          {error && <div className="text-error">{error}</div>}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Email</span>
@@ -176,7 +178,7 @@ export default function AuthForm() {
           <div className="form-control mt-6">
             {formMode === FormMode.Login ? (
               <button
-                disabled={!email || !password}
+                disabled={!email || !password || error !== null}
                 onClick={handleLogin}
                 className="btn btn-primary"
               >
