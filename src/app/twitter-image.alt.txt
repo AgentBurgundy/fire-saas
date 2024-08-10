@@ -1,0 +1,2 @@
+NextJS Boilerplate for 
+Firebase, Stripe and Mixpanel
