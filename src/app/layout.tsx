@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "FireSaaS",
   description:
     "FireSaaS helps you build your SaaS faster and easier using NextJS, Firebase and Stripe!",
+  metadataBase: new URL("https://firesaas.dev"),
   openGraph: {
     title: "FireSaaS",
     description:
