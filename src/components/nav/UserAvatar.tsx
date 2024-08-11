@@ -4,9 +4,11 @@ import { useAuth } from "@/lib/context/AuthContext";
 import signout from "@/lib/firebase/signout";
 import Link from "next/link";
 import SubscriptionModalReminder from "../subscription/SubscriptionModalReminder";
+import { useRouter } from "next/navigation";
 
 export default function UserAvatar() {
-  const { currentUser, userRole, isLoadingAuth } = useAuth();
+  const { currentUser, isLoadingAuth } = useAuth();
+  const router = useRouter();
 
   if (isLoadingAuth) {
     return <span className="loading loading-spinner loading-md"></span>;
@@ -46,7 +48,15 @@ export default function UserAvatar() {
         </li>
 
         <li>
-          <a onClick={signout}>Logout</a>
+          <button
+            onClick={() =>
+              signout(async () => {
+                router.push("/login");
+              })
+            }
+          >
+            Logout
+          </button>
         </li>
       </ul>
     </div>

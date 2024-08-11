@@ -27,8 +27,6 @@ export default function AuthForm() {
     try {
       const { user, error } = await signIn(SignInMethod.Google, {
         signupCallback: async (userCredential) => {
-          console.log("New user signed up", userCredential.user.uid);
-
           // When a new user signs up, call the signup endpoint
           const response = await fetch("/api/users/signup", {
             method: "POST",
@@ -59,8 +57,6 @@ export default function AuthForm() {
           password,
         },
         signupCallback: async (userCredential) => {
-          console.log("New user signed up", userCredential.user.uid);
-
           // When a new user signs up, call the signup endpoint
           const response = await fetch("/api/users/signup", {
             method: "POST",
