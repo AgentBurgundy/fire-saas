@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "pre-commit": "lint-staged && npm run build && npm test",
-    "prepare": "husky"
+    "prepare": "husky",
+    "update-from-upstream": "node update-from-upstream.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
