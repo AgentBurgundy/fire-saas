@@ -1,5 +1,7 @@
 # FireSaaS Project
 
+![CI](https://github.com/AgentBurgundy/fire-saas/actions/workflows/ci.yml/badge.svg) &nbsp;&nbsp;&nbsp;&nbsp; ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 ![FireSaaS](./public/firesaas.png)
 
 ## **Overview**
