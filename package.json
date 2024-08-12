@@ -7,7 +7,14 @@
     "test": "jest",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pre-commit": "lint-staged && npm run build && npm test"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
@@ -43,7 +50,9 @@
     "daisyui": "^4.6.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "husky": "^9.1.4",
     "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.8",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "ts-jest": "^29.2.4",
