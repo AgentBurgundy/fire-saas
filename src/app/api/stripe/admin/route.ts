@@ -5,6 +5,13 @@ export async function GET() {
   try {
     const stripe = await getStripeServerSide();
 
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe is not initialized" },
+        { status: 500 },
+      );
+    }
+
     // Get the date 30 days ago
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -31,14 +38,14 @@ export async function GET() {
     const mrr = activeSubscriptions.data.reduce(
       (sum, subscription) =>
         sum + (subscription.items.data[0].price.unit_amount ?? 0) / 100,
-      0
+      0,
     );
 
     // Calculate churn rate
     const canceledSubscriptionsCount = canceledSubscriptions.data.length;
     const churnRate = calculateChurnRate(
       activeSubscriptionsCount,
-      canceledSubscriptionsCount
+      canceledSubscriptionsCount,
     );
 
     return NextResponse.json({
@@ -55,7 +62,7 @@ export async function GET() {
 
 function calculateChurnRate(
   activeSubscriptions: number,
-  canceledSubscriptions: number
+  canceledSubscriptions: number,
 ): number {
   if (activeSubscriptions === 0) return 0;
   return (

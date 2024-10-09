@@ -10,6 +10,13 @@ export async function POST(req: Request) {
 
     const stripe = await getStripeServerSide();
 
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe is not initialized" },
+        { status: 500 },
+      );
+    }
+
     const customer = await stripe.customers.create({
       email: email,
     });

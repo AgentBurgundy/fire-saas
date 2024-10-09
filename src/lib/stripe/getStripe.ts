@@ -19,19 +19,17 @@ let stripePromise: Promise<Stripe | null>;
  *   console.error('Failed to load Stripe:', error);
  * }
  */
-const getStripe = async (): Promise<Stripe> => {
+const getStripe = async (): Promise<Stripe | null> => {
   if (!stripePromise) {
     const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
     if (!publishableKey) {
-      throw new Error(
-        "Stripe publishable key is not set in environment variables"
-      );
+      return null;
     }
 
     stripePromise = loadStripe(publishableKey).then((stripe) => {
       if (!stripe) {
-        throw new Error("Failed to initialize Stripe");
+        return null;
       }
       return stripe;
     });
@@ -39,7 +37,7 @@ const getStripe = async (): Promise<Stripe> => {
 
   const stripe = await stripePromise;
   if (!stripe) {
-    throw new Error("Failed to load Stripe");
+    return null;
   }
 
   return stripe;

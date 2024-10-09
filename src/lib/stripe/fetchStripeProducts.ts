@@ -28,7 +28,8 @@ export default async function fetchStripeProducts(): Promise<{
 }> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!baseUrl) {
-    throw new Error("NEXT_PUBLIC_SITE_URL is not defined");
+    console.warn("NEXT_PUBLIC_SITE_URL is not defined");
+    return { products: [] };
   }
 
   try {
@@ -45,36 +46,48 @@ export default async function fetchStripeProducts(): Promise<{
       products
         .filter((product) => product.active)
         .map(async (product) => {
-          const priceResponse = await fetch(
-            `${baseUrl}/api/products/${product.id}`
-          );
-          if (!priceResponse.ok) {
-            throw new Error(
-              `Failed to fetch price for product ${product.id}: ${priceResponse.statusText}`
+          try {
+            const priceResponse = await fetch(
+              `${baseUrl}/api/products/${product.id}`,
             );
+            if (!priceResponse.ok) {
+              throw new Error(
+                `Failed to fetch price for product ${product.id}: ${priceResponse.statusText}`,
+              );
+            }
+
+            const { priceInfo } = (await priceResponse.json()) as {
+              priceInfo: StripePriceData;
+            };
+
+            if (!priceInfo.unit_amount) {
+              throw new Error(`Price for product ${product.id} is not defined`);
+            }
+
+            return {
+              ...product,
+              price: {
+                ...priceInfo,
+                formatted_price: formatStripeAmount(priceInfo.unit_amount),
+              },
+            };
+          } catch (error) {
+            console.error(
+              `Error fetching price for product ${product.id}:`,
+              error,
+            );
+            return null;
           }
-
-          const { priceInfo } = (await priceResponse.json()) as {
-            priceInfo: StripePriceData;
-          };
-
-          if (!priceInfo.unit_amount) {
-            throw new Error(`Price for product ${product.id} is not defined`);
-          }
-
-          return {
-            ...product,
-            price: {
-              ...priceInfo,
-              formatted_price: formatStripeAmount(priceInfo.unit_amount),
-            },
-          };
-        })
+        }),
     );
 
-    return { products: activeProducts };
+    return {
+      products: activeProducts.filter(
+        (p): p is StripeProductData => p !== null && p.price !== undefined,
+      ),
+    };
   } catch (error) {
     console.error("Error fetching Stripe products:", error);
-    throw error;
+    return { products: [] };
   }
 }

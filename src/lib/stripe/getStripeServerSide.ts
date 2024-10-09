@@ -19,7 +19,7 @@ let stripeInstance: Stripe | null = null;
  *   console.error('Failed to initialize Stripe:', error);
  * }
  */
-export async function getStripeServerSide(): Promise<Stripe> {
+export async function getStripeServerSide(): Promise<Stripe | null> {
   if (stripeInstance) {
     return stripeInstance;
   }
@@ -27,7 +27,7 @@ export async function getStripeServerSide(): Promise<Stripe> {
   const secretKey = process.env.STRIPE_SECRET_KEY;
 
   if (!secretKey) {
-    throw new Error("Stripe secret key is not set in environment variables");
+    return null;
   }
 
   try {
@@ -36,6 +36,6 @@ export async function getStripeServerSide(): Promise<Stripe> {
     return stripeInstance;
   } catch (error) {
     console.error("Error initializing Stripe:", error);
-    throw new Error("Failed to initialize Stripe");
+    return null;
   }
 }

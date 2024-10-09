@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
   if (!stripeSecretKey) {
     return NextResponse.json(
       { error: "Stripe secret key not found" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -27,6 +27,13 @@ export async function GET(req: NextRequest) {
     .then((doc) => doc.data()?.stripeId);
 
   const stripe = await getStripeServerSide();
+
+  if (!stripe) {
+    return NextResponse.json(
+      { error: "Stripe is not initialized" },
+      { status: 500 },
+    );
+  }
 
   const customerSession = await stripe.customerSessions.create({
     customer: customerId,

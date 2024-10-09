@@ -52,5 +52,5 @@ export type StripeProductData = {
   /** A tax code ID. */
   tax_code: string | null;
   /** Optional price data associated with the product. */
-  price?: StripePriceData;
+  price: StripePriceData;
 };

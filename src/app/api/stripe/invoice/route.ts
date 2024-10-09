@@ -7,17 +7,24 @@ export async function POST(req: Request) {
     if (!customerId || !amount || !dueDate) {
       return NextResponse.json(
         { error: "Customer ID, amount, and due date are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const stripe = await getStripeServerSide();
 
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe is not initialized" },
+        { status: 500 },
+      );
+    }
+
     // Calculate days until due
     const currentDate = new Date();
     const dueDateObject = new Date(dueDate);
     const daysUntilDue = Math.ceil(
-      (dueDateObject.getTime() - currentDate.getTime()) / (1000 * 3600 * 24)
+      (dueDateObject.getTime() - currentDate.getTime()) / (1000 * 3600 * 24),
     );
 
     // Create a new draft invoice for the customer

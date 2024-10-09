@@ -4,6 +4,13 @@ import { getStripeServerSide } from "@/lib/stripe/getStripeServerSide";
 export async function GET() {
   try {
     const stripe = await getStripeServerSide();
+
+    if (!stripe) {
+      return NextResponse.json(
+        { error: "Stripe is not initialized" },
+        { status: 500 },
+      );
+    }
     const customers = await stripe.customers.list({ limit: 100 });
 
     const formattedCustomers = customers.data.map((customer) => ({
